@@ -1,5 +1,8 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 
-export async function ping(request: FastifyRequest, reply: FastifyReply) {
+export async function transaction(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
   reply.send({ message: "pong" });
 }
