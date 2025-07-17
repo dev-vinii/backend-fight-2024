@@ -27,6 +27,10 @@ export async function createTransaction(
     if (newBalance < -client.limit) throw new Error("Insufficient balance");
     client.balance = newBalance;
   }
+  await db
+    .update(clients)
+    .set({ balance: client.balance })
+    .where(eq(clients.id, clientId));
 
   await db.insert(transactions).values({
     clientId,

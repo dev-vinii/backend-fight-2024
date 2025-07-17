@@ -1,13 +1,38 @@
 import "dotenv/config";
+import { env } from "@/env";
 import Fastify from "fastify";
 import { join } from "path";
-import { env } from "@/env";
 
 const fastify = Fastify({
   logger: true,
 });
 
-// Auto-load routes
+fastify.register(import("@fastify/swagger"), {
+  openapi: {
+    openapi: "3.0.0",
+    info: {
+      title: "🥊 Backend Fight 2024 API",
+      description: "API para a Rinha de Backend 2024",
+      version: "1.0.0",
+    },
+    servers: [
+      {
+        url: `http://localhost:${env.PORT}`,
+        description: "Development server",
+      },
+    ],
+  },
+});
+
+fastify.register(import("@fastify/swagger-ui"), {
+  routePrefix: "/docs",
+  uiConfig: {
+    docExpansion: "full",
+    deepLinking: false,
+  },
+  staticCSP: true,
+});
+
 fastify.register(import("@fastify/autoload"), {
   dir: join(__dirname, "routes"),
 });
