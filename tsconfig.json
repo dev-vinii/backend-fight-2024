@@ -5,7 +5,7 @@
 
   "compilerOptions": {
     "lib": ["es2024", "ESNext.Array", "ESNext.Collection", "ESNext.Iterator", "ESNext.Promise"],
-    "module": "nodenext",
+    "module": "esnext",
     "target": "es2024",
     "outDir": "./dist",
     "rootDir": "./src",
@@ -13,7 +13,8 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "moduleResolution": "node16",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
     
     "baseUrl": "./",
     "paths": {
