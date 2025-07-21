@@ -1,7 +1,7 @@
-import { FastifyReply, FastifyRequest } from "fastify";
-import { db } from "@/db/database";
+import { db } from "@/db/postgres";
 import { clients, transactions } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { FastifyReply, FastifyRequest } from "fastify";
 
 interface CreateTransactionData {
   value: number;

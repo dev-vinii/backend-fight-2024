@@ -1,11 +1,22 @@
-import "dotenv/config";
 import { env } from "@/env";
 import Fastify from "fastify";
 import { join } from "path";
-
+import { logger } from "./utils/logger";
 const fastify = Fastify({
   logger: true,
 });
+
+fastify
+  .register(require("@fastify/mongodb"), {
+    forceClose: true,
+    url: env.MONGODB_URL,
+  })
+  .after((err) => {
+    if (err) {
+      return logger.error(`❌ MongoDB connection failed: ${err.message}`);
+    }
+    return logger.info("✅ MongoDB connected successfully");
+  });
 
 fastify.register(import("@fastify/swagger"), {
   openapi: {
