@@ -2,12 +2,24 @@ import { env } from "@/env";
 import Fastify from "fastify";
 import { join } from "path";
 import { logger } from "./utils/logger";
+
 const fastify = Fastify({
   logger: true,
 });
 
 fastify
-  .register(require("@fastify/mongodb"), {
+  .register(import("fastify-rabbitmq"), {
+    connection: env.RABBITMQ_URL,
+  })
+  .after((err) => {
+    if (err) {
+      return logger.error(`❌ RabbitMQ connection failed: ${err.message}`);
+    }
+    return logger.info("✅ RabbitMQ connected successfully");
+  });
+
+fastify
+  .register(import("@fastify/mongodb"), {
     forceClose: true,
     url: env.MONGODB_URL,
   })
