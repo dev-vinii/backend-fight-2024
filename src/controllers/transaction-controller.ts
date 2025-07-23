@@ -1,5 +1,5 @@
 import { db } from "@/db/postgres";
-import { clients, transactions } from "@/db/schema";
+import { clients } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { FastifyReply, FastifyRequest } from "fastify";
 
@@ -45,7 +45,19 @@ export async function createTransaction(
       .set({ balance: client.balance })
       .where(eq(clients.id, id));
 
-    await db.insert(transactions).values({
+    // await db.insert(transactions).values({
+    //   clientId: id,
+    //   value,
+    //   type,
+    //   description,
+    // });
+
+    const pub = request.server.rabbitmq.createPublisher({
+      maxAttempts: 2,
+      confirm: true,
+    });
+
+    await pub.send("transactions", {
       clientId: id,
       value,
       type,
