@@ -44,6 +44,17 @@ fastify.register(import("@fastify/swagger-ui"), {
   staticCSP: true,
 });
 
+fastify
+  .register(import("fastify-rabbitmq"), {
+    connection: env.RABBITMQ_URL,
+  })
+  .after((err) => {
+    if (err) {
+      return logger.error(`❌ RabbitMQ connection failed: ${err.message}`);
+    }
+    return logger.info("✅ RabbitMQ connected successfully");
+  });
+
 fastify.register(import("@fastify/autoload"), {
   dir: join(__dirname, "routes"),
 });
