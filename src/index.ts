@@ -1,5 +1,10 @@
 import { env } from "@/env";
+import fastifyAutoload from "@fastify/autoload";
+import fastifyMongoDB from "@fastify/mongodb";
+import fastifySwagger from "@fastify/swagger";
+import fastifySwaggerUi from "@fastify/swagger-ui";
 import Fastify from "fastify";
+import fastifyRabbit from "fastify-rabbitmq";
 import { join } from "path";
 import { logger } from "./utils/logger";
 
@@ -8,7 +13,7 @@ const fastify = Fastify({
 });
 
 fastify
-  .register(import("fastify-rabbitmq"), {
+  .register(fastifyRabbit, {
     connection: env.RABBITMQ_URL,
   })
   .after((err) => {
@@ -19,7 +24,7 @@ fastify
   });
 
 fastify
-  .register(import("@fastify/mongodb"), {
+  .register(fastifyMongoDB, {
     forceClose: true,
     url: env.MONGODB_URL,
   })
@@ -30,7 +35,7 @@ fastify
     return logger.info("✅ MongoDB connected successfully");
   });
 
-fastify.register(import("@fastify/swagger"), {
+fastify.register(fastifySwagger, {
   openapi: {
     openapi: "3.0.0",
     info: {
@@ -47,7 +52,7 @@ fastify.register(import("@fastify/swagger"), {
   },
 });
 
-fastify.register(import("@fastify/swagger-ui"), {
+fastify.register(fastifySwaggerUi, {
   routePrefix: "/docs",
   uiConfig: {
     docExpansion: "full",
@@ -56,18 +61,7 @@ fastify.register(import("@fastify/swagger-ui"), {
   staticCSP: true,
 });
 
-fastify
-  .register(import("fastify-rabbitmq"), {
-    connection: env.RABBITMQ_URL,
-  })
-  .after((err) => {
-    if (err) {
-      return logger.error(`❌ RabbitMQ connection failed: ${err.message}`);
-    }
-    return logger.info("✅ RabbitMQ connected successfully");
-  });
-
-fastify.register(import("@fastify/autoload"), {
+fastify.register(fastifyAutoload, {
   dir: join(__dirname, "routes"),
 });
 
